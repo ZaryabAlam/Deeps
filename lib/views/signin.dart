@@ -179,6 +179,7 @@ class _SignInState extends State<SignIn> {
                                       isValidForm = true;
                                       isLoading = true;
                                       Loader();
+                                      showLoaderDialog(context);
                                       // Get.to(AppPage());
                                     });
                                   } else {
@@ -294,10 +295,11 @@ class _SignInState extends State<SignIn> {
 
   void Loader() async {
     await Future.delayed(const Duration(seconds: 3));
-    Get.to(() => AppPage());
     setState(() {
       isLoading = false;
+      navigator!.pop();
     });
+    Get.to(() => AppPage());
   }
 
   showLoaderDialog(BuildContext context) async {

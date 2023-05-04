@@ -67,23 +67,23 @@ class _AppPageState extends State<AppPage> {
               content: const Text("Are you sure to logout?"),
               actions: [
                 IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.cancel_outlined,
+                    color: Colors.red,
+                    size: 28,
+                  ),
+                ),
+                SizedBox(width: 05),
+                IconButton(
                   onPressed: () async {
                     Get.to(() => Home());
                   },
                   icon: Icon(
                     Icons.check_circle,
                     color: Colors.green,
-                    size: 28,
-                  ),
-                ),
-                SizedBox(width: 05),
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.cancel_rounded,
-                    color: Colors.red,
                     size: 28,
                   ),
                 ),

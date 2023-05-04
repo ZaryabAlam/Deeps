@@ -29,6 +29,28 @@ class _HomeState extends State<Home> {
                   width: 70,
                   child: TextButton(
                     onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                    style: TextButton.styleFrom(
+                        elevation: 0,
+                        side: const BorderSide(color: Colors.red, width: 1),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        primary: Colors.black,
+                        backgroundColor: Colors.transparent,
+                        minimumSize: Size.fromHeight(70)),
+                    child: const Text(
+                      'No',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+                // SizedBox(width: 2),
+                Container(
+                  height: 30,
+                  width: 70,
+                  child: TextButton(
+                    onPressed: () {
                       SystemChannels.platform
                           .invokeMethod('SystemNavigator.pop');
                     },
@@ -41,26 +63,6 @@ class _HomeState extends State<Home> {
                         minimumSize: Size.fromHeight(70)),
                     child: const Text(
                       'Yes',
-                    ),
-                  ),
-                ),
-                SizedBox(width: 1),
-                Container(
-                  height: 30,
-                  width: 70,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, false);
-                    },
-                    style: TextButton.styleFrom(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        primary: Colors.white,
-                        backgroundColor: Colors.red,
-                        minimumSize: Size.fromHeight(70)),
-                    child: const Text(
-                      'No',
                     ),
                   ),
                 ),
