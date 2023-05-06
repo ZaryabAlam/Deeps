@@ -2,9 +2,9 @@ import 'package:deeps/views/app_page.dart';
 import 'package:deeps/views/extra.dart';
 import 'package:deeps/views/signup.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -15,6 +15,11 @@ class _SignInState extends State<SignIn> {
   var _numberForm = GlobalKey<FormState>();
   bool isValidForm = false;
   bool isLoading = false;
+  final emailController = TextEditingController();
+  final passController = TextEditingController();
+  String? myEmail = "test@gmail.com";
+  String? myPass = "123456";
+  bool isObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +119,10 @@ class _SignInState extends State<SignIn> {
                               }
                               return null;
                             },
+                            controller: emailController,
                             cursorColor: Colors.black,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 20.0, horizontal: 30.0),
@@ -136,8 +144,11 @@ class _SignInState extends State<SignIn> {
                               }
                               return null;
                             },
+                            controller: passController,
                             cursorColor: Colors.black,
-                            obscureText: true,
+                            obscureText: isObscure,
+                            textInputAction: TextInputAction.done,
+                            keyboardType: TextInputType.text,
                             decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 20.0, horizontal: 30.0),
@@ -145,6 +156,18 @@ class _SignInState extends State<SignIn> {
                                 hintStyle: TextStyle(color: Colors.black38),
                                 filled: true,
                                 fillColor: Colors.grey.shade200,
+                                suffixIcon: IconButton(
+                                    color: (isObscure
+                                        ? Colors.grey
+                                        : Colors.amber),
+                                    icon: Icon(isObscure
+                                        ? Icons.visibility_off
+                                        : Icons.visibility),
+                                    onPressed: () {
+                                      setState(() {
+                                        isObscure = !isObscure;
+                                      });
+                                    }),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius: BorderRadius.circular(80))),
@@ -152,7 +175,7 @@ class _SignInState extends State<SignIn> {
                           SizedBox(height: 10),
                           GestureDetector(
                             onTap: () {
-                              Get.to(() => AppPage());
+                              Get.to(() => Extra());
                             },
                             child: Align(
                                 alignment: Alignment.centerRight,
@@ -299,14 +322,27 @@ class _SignInState extends State<SignIn> {
       isLoading = false;
       navigator!.pop();
     });
-    Get.to(() => AppPage());
+    if (emailController.text == myEmail && passController.text == myPass) {
+      Get.to(() => AppPage());
+      Fluttertoast.showToast(
+        msg: 'Login Successful',
+        backgroundColor: Colors.green,
+      );
+    } else {
+      Fluttertoast.showToast(
+          msg: 'Login Failed',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red.shade300,
+          textColor: Colors.white);
+    }
   }
 
   showLoaderDialog(BuildContext context) async {
     AlertDialog alert = await AlertDialog(
       content: new Row(
         children: [
-          CircularProgressIndicator(),
+          CircularProgressIndicator(color: Colors.amber),
           Container(
               margin: EdgeInsets.only(left: 7), child: Text("Loading...")),
         ],
@@ -328,7 +364,7 @@ progressDialogue(BuildContext context) async {
     elevation: 0,
     content: Container(
       child: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(color: Colors.amber),
       ),
     ),
   );
