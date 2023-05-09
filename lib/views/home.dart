@@ -1,8 +1,9 @@
-import 'package:deeps/views/signin.dart';
-import 'package:deeps/views/signup.dart';
+import 'package:deeps/views/SignIN/signin.dart';
+import 'package:deeps/views/SignUP/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -148,7 +149,7 @@ class _HomeState extends State<Home> {
                                     backgroundColor: Colors.black,
                                     minimumSize: Size.fromHeight(70)),
                                 onPressed: () {
-                                  Get.to(SignIn());
+                                  Get.to(() => SignIn());
                                   // Navigator.push(
                                   //   context,
                                   //   MaterialPageRoute(
@@ -174,7 +175,7 @@ class _HomeState extends State<Home> {
                                     backgroundColor: Colors.white,
                                     minimumSize: Size.fromHeight(70)),
                                 onPressed: () {
-                                  Get.to(SignUp());
+                                  Get.to(() => SignUp());
                                 },
                                 child: Text(
                                   "Sign Up",

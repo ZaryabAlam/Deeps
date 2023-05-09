@@ -1,4 +1,5 @@
 import 'package:deeps/views/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +11,8 @@ class AppPage extends StatefulWidget {
 }
 
 class _AppPageState extends State<AppPage> {
+  final user = FirebaseAuth.instance.currentUser!;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +41,9 @@ class _AppPageState extends State<AppPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Text("User: ${user.email!}"),
+            Text("User ID: ${user.uid}"),
+            SizedBox(height: 20),
             Container(
               height: 250,
               width: 250,
@@ -79,6 +85,7 @@ class _AppPageState extends State<AppPage> {
                 SizedBox(width: 05),
                 IconButton(
                   onPressed: () async {
+                    FirebaseAuth.instance.signOut();
                     Get.to(() => Home());
                   },
                   icon: Icon(
