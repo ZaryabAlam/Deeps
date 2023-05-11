@@ -1,10 +1,9 @@
 import 'package:deeps/views/app_page.dart';
-import 'package:deeps/views/extra.dart';
 import 'package:deeps/views/SignUP/signup.dart';
+import 'package:deeps/views/signIn/forgot_password_page.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SignIn extends StatefulWidget {
@@ -187,7 +186,7 @@ class _SignInState extends State<SignIn> {
                           SizedBox(height: 10),
                           GestureDetector(
                             onTap: () {
-                              Get.to(() => Extra());
+                              Get.to(() => ForgotPassword());
                             },
                             child: Align(
                                 alignment: Alignment.centerRight,

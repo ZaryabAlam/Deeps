@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../Utils/loaderDialog.dart';
+import '../../Utils/mySnackbar.dart';
 import '../app_page.dart';
 
 class SignUp extends StatefulWidget {
@@ -343,25 +345,6 @@ class _SignUpState extends State<SignUp> {
         ));
   }
 
-  showLoaderDialog(BuildContext context) async {
-    AlertDialog alert = await AlertDialog(
-      content: new Row(
-        children: [
-          CircularProgressIndicator(color: Colors.amber),
-          Container(
-              margin: EdgeInsets.only(left: 7), child: Text("Loading...")),
-        ],
-      ),
-    );
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
   Future signUp() async {
     await Future.delayed(const Duration(seconds: 3));
     setState(() {
@@ -379,10 +362,8 @@ class _SignUpState extends State<SignUp> {
           email: emailController.text.trim(),
           password: passController.text.trim());
       Get.to(() => AppPage());
-      Fluttertoast.showToast(
-        msg: 'Signup Successful',
-        backgroundColor: Colors.green,
-      );
+      Get.showSnackbar(mySnackbar(
+          "Signup Successful!", Colors.green, Icons.check_circle_rounded));
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
         Get.showSnackbar(const GetSnackBar(
