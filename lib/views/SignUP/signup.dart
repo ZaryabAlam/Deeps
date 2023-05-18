@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../Utils/loaderDialog.dart';
 import '../../Utils/mySnackbar.dart';
@@ -226,7 +227,7 @@ class _SignUpState extends State<SignUp> {
                                       if (_numberForm.currentState!
                                           .validate()) {
                                         setState(() {
-                                          signUp();
+                                          signUp(context);
                                           isLoading = true;
                                           isValidForm = true;
                                           showLoaderDialog(context);
@@ -345,38 +346,89 @@ class _SignUpState extends State<SignUp> {
         ));
   }
 
-  Future signUp() async {
+  // Future signUp() async {
+  //   await Future.delayed(const Duration(seconds: 3));
+  //   setState(() {
+  //     isLoading = false;
+  //     navigator!.pop();
+  //   });
+  //   // showDialog(
+  //   //     context: context,
+  //   //     barrierDismissible: false,
+  //   //     builder: ((context) => Center(
+  //   //           child: CircularProgressIndicator(),
+  //   //         )));
+  //   try {
+  //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  //         email: emailController.text.trim(),
+  //         password: passController.text.trim());
+  //     Get.to(() => AppPage());
+  //     Get.showSnackbar(mySnackbar(
+  //         "Signup Successful!", Colors.green, Icons.check_circle_rounded));
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == "email-already-in-use") {
+  //       Get.showSnackbar(const GetSnackBar(
+  //         margin: EdgeInsets.all(15),
+  //         icon: Icon(Icons.warning_rounded, color: Colors.white),
+  //         borderRadius: 8,
+  //         message: ('An account already exist with the given email address'),
+  //         duration: Duration(seconds: 3),
+  //         backgroundColor: Colors.red,
+  //       ));
+  //     }
+  //     // Utils.showSnackBar(e.message);
+  //     else {
+  //       Fluttertoast.showToast(
+  //           msg: 'Signup Failed',
+  //           toastLength: Toast.LENGTH_SHORT,
+  //           gravity: ToastGravity.BOTTOM,
+  //           backgroundColor: Colors.red.shade300,
+  //           textColor: Colors.white);
+  //     }
+  //     print(e);
+  //   }
+  // }
+
+  Future<bool> signUp(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 3));
     setState(() {
       isLoading = false;
       navigator!.pop();
     });
-    // showDialog(
-    //     context: context,
-    //     barrierDismissible: false,
-    //     builder: ((context) => Center(
-    //           child: CircularProgressIndicator(),
-    //         )));
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passController.text.trim());
-      Get.to(() => AppPage());
-      Get.showSnackbar(mySnackbar(
-          "Signup Successful!", Colors.green, Icons.check_circle_rounded));
+      UserCredential credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passController.text.trim());
+
+      //if user creation is success, create a user model
+      if (credential.user == null) return false;
+
+      Map<String, dynamic> user = {
+        "uId": credential.user!.uid.toString(),
+        "userName": userNameController.text.trim(),
+        "email": emailController.text.trim(),
+        "password": passController.text.trim(),
+      };
+
+      //and upload user model to firebase
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(credential.user!.uid)
+          .set(user)
+          .then((value) {
+        Get.showSnackbar(mySnackbar(
+            "Signup Successful!", Colors.green, Icons.check_circle_rounded));
+        Get.to(() => AppPage());
+      });
+      return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
-        Get.showSnackbar(const GetSnackBar(
-          margin: EdgeInsets.all(15),
-          icon: Icon(Icons.warning_rounded, color: Colors.white),
-          borderRadius: 8,
-          message: ('An account already exist with the given email address'),
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.red,
-        ));
-      }
-      // Utils.showSnackBar(e.message);
-      else {
+        Get.showSnackbar(mySnackbar(
+            "An account already exist with the given email address",
+            Colors.red,
+            Icons.warning_rounded));
+      } else {
         Fluttertoast.showToast(
             msg: 'Signup Failed',
             toastLength: Toast.LENGTH_SHORT,
@@ -385,6 +437,7 @@ class _SignUpState extends State<SignUp> {
             textColor: Colors.white);
       }
       print(e);
+      return false;
     }
   }
 }

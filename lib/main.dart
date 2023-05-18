@@ -27,9 +27,9 @@ class MyApp extends StatelessWidget {
         future: _initialization,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Center(
-              child: Text("No Internet Connection!"),
-            );
+            return new Directionality(
+                textDirection: TextDirection.ltr,
+                child: new Text('No Internet Connection'));
           } else if (snapshot.connectionState == ConnectionState.done) {
             return GetMaterialApp(
               // scaffoldMessengerKey: Utils.messengerKey,
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
             );
           }
           return new Directionality(
-              textDirection: TextDirection.ltr, child: new Text('Hello'));
+              textDirection: TextDirection.ltr, child: new Text('ERROR'));
         });
 
     // return GetMaterialApp(

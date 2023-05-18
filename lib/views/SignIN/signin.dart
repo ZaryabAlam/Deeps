@@ -6,6 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../Utils/mySnackbar.dart';
+
 class SignIn extends StatefulWidget {
   @override
   State<SignIn> createState() => _SignInState();
@@ -17,8 +19,8 @@ class _SignInState extends State<SignIn> {
   bool isLoading = false;
   final emailController = TextEditingController();
   final passController = TextEditingController();
-  String? myEmail = "test@gmail.com";
-  String? myPass = "123456";
+  // String? myEmail = "test@gmail.com";
+  // String? myPass = "123456";
   bool isObscure = true;
 
   @override
@@ -413,14 +415,17 @@ class _SignInState extends State<SignIn> {
       //     gravity: ToastGravity.BOTTOM,
       //     backgroundColor: Colors.red.shade300,
       //     textColor: Colors.white);
-      Get.showSnackbar(const GetSnackBar(
-        margin: EdgeInsets.all(15),
-        icon: Icon(Icons.warning_rounded, color: Colors.white),
-        borderRadius: 8,
-        message: ('Login Failed! Try again with correct credentials'),
-        duration: Duration(seconds: 3),
-        backgroundColor: Colors.red,
-      ));
+      if (e.code == "wrong-password") {
+        Get.showSnackbar(mySnackbar(
+            "The password is invalid! Please try correct password.",
+            Colors.deepOrange,
+            Icons.warning_rounded));
+      } else {
+        Get.showSnackbar(mySnackbar(
+            "Login Failed! Try again with correct credentials",
+            Colors.red,
+            Icons.warning_rounded));
+      }
       print(e);
     }
   }
