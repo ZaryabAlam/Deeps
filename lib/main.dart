@@ -4,9 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:ui' as ui;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // runApp(
+  //   MaterialApp(
+  //       navigatorKey: navigatorKey,
+  //       // debugShowCheckedModeBanner: true,
+  //       home: MyApp()),
+  // );
   runApp(MyApp());
 }
 
@@ -46,9 +53,8 @@ class MyApp extends StatelessWidget {
               ),
             );
           }
-          return Container(
-            child: Text("WAIT! Loading..."),
-          );
+          return new Directionality(
+              textDirection: TextDirection.ltr, child: new Text('Hello'));
         });
 
     // return GetMaterialApp(
