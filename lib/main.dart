@@ -1,4 +1,5 @@
-import 'package:deeps/views/app_page.dart';
+import 'package:deeps/views/screens/app_page.dart';
+import 'package:deeps/views/dashboard.dart';
 import 'package:deeps/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
                       } else if (snapshot.hasError) {
                         return Center(child: Text("Something went wrong!"));
                       } else if (snapshot.hasData) {
-                        return AppPage();
+                        return Dashboard();
                       } else {
                         return Home();
                       }

@@ -1,3 +1,5 @@
+import 'package:deeps/Utils/mySnackbar.dart';
+import 'package:deeps/views/dashboard.dart';
 import 'package:deeps/views/home.dart';
 import 'package:deeps/views/SignIN/signin.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,8 +11,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../Utils/loaderDialog.dart';
-import '../../Utils/mySnackbar.dart';
-import '../app_page.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -419,7 +419,7 @@ class _SignUpState extends State<SignUp> {
           .then((value) {
         Get.showSnackbar(mySnackbar(
             "Signup Successful!", Colors.green, Icons.check_circle_rounded));
-        Get.to(() => AppPage());
+        Get.to(() => Dashboard());
       });
       return true;
     } on FirebaseAuthException catch (e) {

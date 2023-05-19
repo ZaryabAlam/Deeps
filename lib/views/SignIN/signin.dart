@@ -1,5 +1,5 @@
-import 'package:deeps/views/app_page.dart';
 import 'package:deeps/views/SignUP/signup.dart';
+import 'package:deeps/views/dashboard.dart';
 import 'package:deeps/views/signIn/forgot_password_page.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -394,7 +394,7 @@ class _SignInState extends State<SignIn> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passController.text.trim());
-      Get.to(() => AppPage());
+      Get.to(() => Dashboard());
       // Fluttertoast.showToast(
       //   msg: 'Login Successful',
       //   backgroundColor: Colors.green,
