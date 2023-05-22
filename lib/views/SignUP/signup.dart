@@ -3,12 +3,18 @@ import 'package:deeps/views/dashboard.dart';
 import 'package:deeps/views/home.dart';
 import 'package:deeps/views/SignIN/signin.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:path/path.dart';
 
 import '../../Utils/loaderDialog.dart';
 
@@ -22,6 +28,9 @@ class _SignUpState extends State<SignUp> {
   final passController = TextEditingController();
   final userNameController = TextEditingController();
   var _numberForm = GlobalKey<FormState>();
+  File? _photo;
+  final ImagePicker _picker = ImagePicker();
+  var imagepath = "";
   bool isValidForm = false;
   bool isObscure = true;
   bool isLoading = false;
@@ -125,7 +134,41 @@ class _SignUpState extends State<SignUp> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // SizedBox(height: 10),
+                              Card(
+                                  elevation: 0,
+                                  child: _photo != null
+                                      ? Container(
+                                          height: 120,
+                                          width: 120,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                  image: FileImage(_photo!),
+                                                  fit: BoxFit.cover)),
+                                        )
+                                      : GestureDetector(
+                                          onTap: () {
+                                            _showPicker(context);
+                                          },
+                                          child: Container(
+                                              height: 120,
+                                              width: 120,
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.grey.shade200),
+                                              child: Center(
+                                                child: FaIcon(
+                                                  FontAwesomeIcons.solidImages,
+                                                  size: 36,
+                                                  color: Colors.black45,
+                                                ),
+                                              ))
+                                          // child: Image.network(
+                                          //   "https://static.thenounproject.com/png/3322766-200.png",
+                                          //   height: 120,
+                                          // ),
+                                          )),
+                              SizedBox(height: 10),
                               TextFormField(
                                 validator: (inputValue) {
                                   if (inputValue!.isEmpty) {
@@ -389,55 +432,222 @@ class _SignUpState extends State<SignUp> {
   //   }
   // }
 
-  Future<bool> signUp(BuildContext context) async {
+  Future<bool?> signUp(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 3));
     setState(() {
       isLoading = false;
       navigator!.pop();
     });
-    try {
-      UserCredential credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: emailController.text.trim(),
-              password: passController.text.trim());
-
-      //if user creation is success, create a user model
-      if (credential.user == null) return false;
-
-      Map<String, dynamic> user = {
-        "uId": credential.user!.uid.toString(),
-        "userName": userNameController.text.trim(),
-        "email": emailController.text.trim(),
-        "password": passController.text.trim(),
-      };
-
-      //and upload user model to firebase
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(credential.user!.uid)
-          .set(user)
-          .then((value) {
-        Get.showSnackbar(mySnackbar(
-            "Signup Successful!", Colors.green, Icons.check_circle_rounded));
-        Get.to(() => Dashboard());
+    if (imagepath == "") {
+      setState(() {
+        isLoading = false;
       });
-      return true;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "email-already-in-use") {
-        Get.showSnackbar(mySnackbar(
-            "An account already exist with the given email address",
-            Colors.red,
-            Icons.warning_rounded));
-      } else {
-        Fluttertoast.showToast(
-            msg: 'Signup Failed',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.red.shade300,
-            textColor: Colors.white);
+      Get.showSnackbar(mySnackbar(
+          "Please upload an image", Colors.orange, Icons.cancel_rounded));
+      print("Image not found");
+    } else {
+      try {
+        UserCredential credential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: emailController.text.trim(),
+                password: passController.text.trim());
+
+        //if user creation is success, create a user model
+        if (credential.user == null) return false;
+
+        Map<String, dynamic> user = {
+          "uId": credential.user!.uid.toString(),
+          "userName": userNameController.text.trim(),
+          "email": emailController.text.trim(),
+          "password": passController.text.trim(),
+          "imagepath": imagepath,
+        };
+
+        //and upload user model to firebase
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(credential.user!.uid)
+            .set(user)
+            .then((value) {
+          Get.showSnackbar(mySnackbar(
+              "Signup Successful!", Colors.green, Icons.check_circle_rounded));
+          Get.to(() => Dashboard());
+        });
+        return true;
+      } on FirebaseAuthException catch (e) {
+        if (e.code == "email-already-in-use") {
+          Get.showSnackbar(mySnackbar(
+              "An account already exist with the given email address",
+              Colors.red,
+              Icons.warning_rounded));
+        } else {
+          Fluttertoast.showToast(
+              msg: 'Something went wrong. Try again',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.red.shade300,
+              textColor: Colors.white);
+        }
+        print(e);
+        return false;
       }
-      print(e);
-      return false;
+    }
+    return null;
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            height: 220,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20),
+                    topLeft: Radius.circular(20))),
+            child: Wrap(
+              children: <Widget>[
+                Column(
+                  children: [
+                    SizedBox(height: 45),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            imgFromGallery();
+                            Navigator.of(context).pop();
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 100,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                    color: Colors.amber.shade600,
+                                    borderRadius: BorderRadius.circular(25)),
+                                child: Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.solidFileImage,
+                                    color: Colors.white,
+                                    size: 48,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                "Gallery",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black45,
+                                    fontSize: 18),
+                              )
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            imgFromCamera();
+                            Navigator.of(context).pop();
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 100,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                    color: Colors.amber.shade600,
+                                    borderRadius: BorderRadius.circular(25)),
+                                child: Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.cameraRetro,
+                                    color: Colors.white,
+                                    size: 48,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                "Camera",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black45,
+                                    fontSize: 18),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                // ListTile(
+                //     leading: const Icon(Icons.photo_library),
+                //     title: const Text('Gallery'),
+                //     onTap: () {
+                //       imgFromGallery();
+                //       Navigator.of(context).pop();
+                //     }),
+                // ListTile(
+                //   leading: const Icon(Icons.photo_camera),
+                //   title: const Text('Camera'),
+                //   onTap: () {
+                //     imgFromCamera();
+                //     Navigator.of(context).pop();
+                //   },
+                // ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _photo = File(pickedFile.path);
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        _photo = File(pickedFile.path);
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadFile() async {
+    if (_photo == null) return;
+    final fileName = basename(_photo!.path);
+    final destination = 'files/${fileName}';
+
+    try {
+      Reference reference =
+          FirebaseStorage.instance.ref().child(destination).child(fileName);
+
+      TaskSnapshot storageTaskSnapshot = await reference.putFile(_photo!);
+
+      print(storageTaskSnapshot.ref.getDownloadURL());
+
+      var dowUrl = await storageTaskSnapshot.ref.getDownloadURL();
+      print(dowUrl);
+
+      imagepath = dowUrl;
+      setState(() {});
+    } catch (e) {
+      print('error occured');
     }
   }
 }
