@@ -12,7 +12,9 @@ Future<dynamic> Logout(BuildContext context) {
             actions: [
               IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
+                  // Navigator.of(context, rootNavigator: true).pop();
+                  Get.back();
                 },
                 icon: Icon(
                   Icons.cancel_outlined,
