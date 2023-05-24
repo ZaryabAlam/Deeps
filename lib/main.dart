@@ -1,4 +1,3 @@
-import 'package:deeps/views/screens/app_page.dart';
 import 'package:deeps/views/dashboard.dart';
 import 'package:deeps/views/home.dart';
 import 'package:flutter/material.dart';
