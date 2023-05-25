@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class AppPage extends StatefulWidget {
@@ -40,14 +41,15 @@ class _AppPageState extends State<AppPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("User: ${user.email!}"),
-            Text("User ID: ${user.uid}"),
-            SizedBox(height: 20),
+            // Text("User: ${user.email!}"),
+            // Text("User ID: ${user.uid}"),
+            SizedBox(height: 80),
             Container(
-              height: 250,
-              width: 250,
+              height: 150,
+              width: 150,
               decoration: BoxDecoration(
-                image: DecorationImage(image: AssetImage("assets/logo.png")),
+                image: DecorationImage(
+                    image: AssetImage("assets/logo.png"), fit: BoxFit.cover),
               ),
             ),
             SizedBox(height: 20),
@@ -57,7 +59,59 @@ class _AppPageState extends State<AppPage> {
                   color: Colors.black26,
                   fontWeight: FontWeight.bold,
                   fontSize: 20),
-            )
+            ),
+            // SizedBox(height: 20),
+            Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "You've logged in from:",
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w200,
+                      fontSize: 18),
+                ),
+                SizedBox(width: 0.8),
+                Container(
+                    height: 32,
+                    width: 32,
+                    decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Center(
+                        child: FaIcon(
+                      FontAwesomeIcons.envelopeOpen,
+                      size: 20,
+                      color: Colors.white,
+                    ))),
+                Container(
+                    height: 32,
+                    width: 32,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Center(
+                        child: FaIcon(
+                      FontAwesomeIcons.google,
+                      size: 20,
+                      color: Colors.white,
+                    ))),
+                Container(
+                    height: 32,
+                    width: 32,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Center(
+                        child: FaIcon(
+                      FontAwesomeIcons.message,
+                      size: 20,
+                      color: Colors.white,
+                    ))),
+              ],
+            ),
+            SizedBox(height: 20),
           ],
         ),
       ),

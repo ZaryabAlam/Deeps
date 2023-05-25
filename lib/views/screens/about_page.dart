@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:deeps/Utils/logOut.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,24 +13,24 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   final user = FirebaseAuth.instance.currentUser!;
-  bool _showIndicator = false;
+  // bool _showIndicator = false;
 
-  void initState() {
-    super.initState();
-    _startLoading();
-  }
+  // void initState() {
+  //   super.initState();
+  //   _startLoading();
+  // }
 
-  void _startLoading() {
-    setState(() {
-      _showIndicator = true;
-    });
+  // void _startLoading() {
+  //   setState(() {
+  //     _showIndicator = true;
+  //   });
 
-    Future.delayed(Duration(seconds: 5), () {
-      setState(() {
-        _showIndicator = false;
-      });
-    });
-  }
+  //   Future.delayed(Duration(seconds: 5), () {
+  //     setState(() {
+  //       _showIndicator = false;
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -95,16 +94,24 @@ class _AboutPageState extends State<AboutPage> {
                             // mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "About User",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 30),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  "About User",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30),
+                                ),
                               ),
                               SizedBox(height: 10),
-                              Text(
-                                "Lorem ipsum dolor sit amet, consectetur adipscing elit, sed do tempor",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  "Lorem ipsum dolor sit amet, consectetur adipscing elit, sed do tempor",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
                               ),
                               SizedBox(height: 80),
                               Container(
@@ -195,16 +202,26 @@ class _AboutPageState extends State<AboutPage> {
                                         border: Border.all(
                                             width: 3, color: Colors.black12)),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(2),
-                                      // child: imageBox(data['imagepath']),
-                                      child: _showIndicator
-                                          ? Padding(
-                                              padding: const EdgeInsets.all(40),
+                                        padding: const EdgeInsets.all(2),
+                                        // child: imageBox(data['imagepath']),
+                                        // child: _showIndicator
+                                        //     ? Padding(
+                                        //         padding: const EdgeInsets.all(40),
+                                        //         child: CircularProgressIndicator(
+                                        //             color: Colors.black38),
+                                        //       )
+                                        //     : imageBox(data['imagepath']),
+                                        child: Stack(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(45),
                                               child: CircularProgressIndicator(
-                                                  color: Colors.black38),
-                                            )
-                                          : imageBox(data['imagepath']),
-                                    ))),
+                                                  strokeWidth: 5,
+                                                  color: Colors.black),
+                                            ),
+                                            imageBox(data['imagepath']),
+                                          ],
+                                        )))),
                           ),
                         ],
                       ),
