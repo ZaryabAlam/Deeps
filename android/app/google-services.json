@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "235825800141-hfitjmsp79f527acufk57efdlrsb9d25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.deeps",
+            "certificate_hash": "a3ec3485dca7b9f4b00416985e60d2405e7d7e66"
+          }
+        },
+        {
           "client_id": "235825800141-n6mmv7ol94aouf23eb1l3tcut8tk2jfc.apps.googleusercontent.com",
           "client_type": 3
         }

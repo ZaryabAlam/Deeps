@@ -2,6 +2,7 @@ import 'package:deeps/views/SignUP/signup.dart';
 import 'package:deeps/views/dashboard.dart';
 import 'package:deeps/views/signIn/forgot_password_page.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,6 +23,9 @@ class _SignInState extends State<SignIn> {
   // String? myEmail = "test@gmail.com";
   // String? myPass = "123456";
   bool isObscure = true;
+  final googleSignIn = GoogleSignIn();
+  GoogleSignInAccount? _user;
+  GoogleSignInAccount get user => _user!;
 
   @override
   void dispose() {
@@ -229,15 +233,21 @@ class _SignInState extends State<SignIn> {
                           ),
                           SizedBox(height: 50),
                           GestureDetector(
-                            onTap: () async {
-                              const url =
-                                  'https://accounts.google.com/v3/signin/identifier?dsh=S-251231302%3A1663782779691460&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F%26ogbl%2F&emr=1&ltmpl=default&ltmplcache=2&osid=1&passive=true&rm=false&scc=1&service=mail&ss=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin&ifkv=AQDHYWov1HYEBHuWBN_m80xuHQYWeafjv3SjrJPJWHgKO0hkWIU7vbUzR1H1up9hCzvJK9h74UO5iw';
-                              if (await canLaunch(url)) {
-                                await launch(url);
-                              } else {
-                                throw 'Could not launch $url';
-                              }
+                            onTap: () {
+                              googleLogin();
+                              isLoading = true;
+
+                              showLoaderDialog(context);
                             },
+                            // onTap: () async {
+                            //   const url =
+                            //       'https://accounts.google.com/v3/signin/identifier?dsh=S-251231302%3A1663782779691460&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F%26ogbl%2F&emr=1&ltmpl=default&ltmplcache=2&osid=1&passive=true&rm=false&scc=1&service=mail&ss=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin&ifkv=AQDHYWov1HYEBHuWBN_m80xuHQYWeafjv3SjrJPJWHgKO0hkWIU7vbUzR1H1up9hCzvJK9h74UO5iw';
+                            //   if (await canLaunch(url)) {
+                            //     await launch(url);
+                            //   } else {
+                            //     throw 'Could not launch $url';
+                            //   }
+                            // },
                             child: Container(
                               height: _h * 0.08,
                               decoration: BoxDecoration(
@@ -378,6 +388,8 @@ class _SignInState extends State<SignIn> {
     );
   }
 
+/////////////////////////// Email Sign In //////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
   Future signIn() async {
     await Future.delayed(const Duration(seconds: 3));
     setState(() {
@@ -429,6 +441,36 @@ class _SignInState extends State<SignIn> {
       print(e);
     }
   }
+
+/////////////////////////// Google Sign In //////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+  Future googleLogin() async {
+    try {
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return;
+      _user = googleUser;
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      await Future.delayed(const Duration(seconds: 3));
+      setState(() {
+        isLoading = false;
+        navigator!.pop();
+      });
+      Get.to(() => Dashboard());
+    } catch (e) {
+      print(e.toString());
+    }
+    // notifyListeners();
+  }
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 }
 
 // progressDialogue(BuildContext context) async {
@@ -449,3 +491,28 @@ class _SignInState extends State<SignIn> {
 //     },
 //   );
 // }
+class GoogleSignInProvider extends ChangeNotifier {
+  final googleSignIn = GoogleSignIn();
+  GoogleSignInAccount? _user;
+  GoogleSignInAccount get user => _user!;
+
+  Future googleLogin() async {
+    try {
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return;
+      _user = googleUser;
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      print(e.toString());
+    }
+    notifyListeners();
+  }
+}

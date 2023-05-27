@@ -433,12 +433,7 @@ class _SignUpState extends State<SignUp> {
   // }
 
   Future<bool?> signUp(BuildContext context) async {
-    await Future.delayed(const Duration(seconds: 3));
-    setState(() {
-      isLoading = false;
-      navigator!.pop();
-    });
-    if (imagepath == "") {
+    if (_photo == null) {
       setState(() {
         isLoading = false;
       });
@@ -447,6 +442,7 @@ class _SignUpState extends State<SignUp> {
       print("Image not found");
     } else {
       try {
+        await uploadFile();
         UserCredential credential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: emailController.text.trim(),
@@ -464,6 +460,11 @@ class _SignUpState extends State<SignUp> {
         };
 
         //and upload user model to firebase
+        await Future.delayed(const Duration(seconds: 5));
+        setState(() {
+          isLoading = false;
+          navigator!.pop();
+        });
         await FirebaseFirestore.instance
             .collection('users')
             .doc(credential.user!.uid)
@@ -471,6 +472,11 @@ class _SignUpState extends State<SignUp> {
             .then((value) {
           Get.showSnackbar(mySnackbar(
               "Signup Successful!", Colors.green, Icons.check_circle_rounded));
+          Future.delayed(const Duration(seconds: 5));
+          setState(() {
+            isLoading = false;
+            navigator!.pop();
+          });
           Get.to(() => Dashboard());
         });
         return true;
@@ -608,7 +614,7 @@ class _SignUpState extends State<SignUp> {
     setState(() {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
-        uploadFile();
+        // uploadFile();
       } else {
         print('No image selected.');
       }
@@ -621,7 +627,7 @@ class _SignUpState extends State<SignUp> {
     setState(() {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
-        uploadFile();
+        // uploadFile();
       } else {
         print('No image selected.');
       }
@@ -631,7 +637,7 @@ class _SignUpState extends State<SignUp> {
   Future uploadFile() async {
     if (_photo == null) return;
     final fileName = basename(_photo!.path);
-    final destination = 'files/${fileName}';
+    final destination = 'Images/${emailController.text.trim()}';
 
     try {
       Reference reference =

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
+import '../../Utils/logOut.dart';
+
 class AppPage extends StatefulWidget {
   const AppPage({super.key});
 
@@ -24,17 +26,17 @@ class _AppPageState extends State<AppPage> {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: Colors.black),
-        // actions: [
-        //   InkWell(
-        //     onTap: () {
-        //       Logout(context);
-        //     },
-        //     child: Icon(
-        //       Icons.logout_rounded,
-        //       size: 30,
-        //     ),
-        //   ),
-        // ],
+        actions: [
+          InkWell(
+            onTap: () {
+              Logout(context);
+            },
+            child: Icon(
+              Icons.logout_rounded,
+              size: 30,
+            ),
+          ),
+        ],
       ),
       body: Center(
         child: Column(

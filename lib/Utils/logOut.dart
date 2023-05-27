@@ -2,6 +2,7 @@ import 'package:deeps/views/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 Future<dynamic> Logout(BuildContext context) {
   return showDialog(
@@ -26,6 +27,7 @@ Future<dynamic> Logout(BuildContext context) {
               IconButton(
                 onPressed: () async {
                   FirebaseAuth.instance.signOut();
+                  GoogleSignIn().disconnect();
                   Get.to(() => Home());
                 },
                 icon: Icon(
