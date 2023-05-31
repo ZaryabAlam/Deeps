@@ -14,6 +14,9 @@ class AppPage extends StatefulWidget {
 
 class _AppPageState extends State<AppPage> {
   final user = FirebaseAuth.instance.currentUser!;
+  Color Ecolor = Colors.grey.withOpacity(0.2);
+  Color Gcolor = Colors.grey.withOpacity(0.2);
+  Color Ocolor = Colors.grey.withOpacity(0.2);
 
   @override
   Widget build(BuildContext context) {
@@ -75,42 +78,9 @@ class _AppPageState extends State<AppPage> {
                       fontSize: 18),
                 ),
                 SizedBox(width: 0.8),
-                Container(
-                    height: 32,
-                    width: 32,
-                    decoration: BoxDecoration(
-                        color: Colors.amber,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Center(
-                        child: FaIcon(
-                      FontAwesomeIcons.envelopeOpen,
-                      size: 20,
-                      color: Colors.white,
-                    ))),
-                Container(
-                    height: 32,
-                    width: 32,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Center(
-                        child: FaIcon(
-                      FontAwesomeIcons.google,
-                      size: 20,
-                      color: Colors.white,
-                    ))),
-                Container(
-                    height: 32,
-                    width: 32,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Center(
-                        child: FaIcon(
-                      FontAwesomeIcons.message,
-                      size: 20,
-                      color: Colors.white,
-                    ))),
+                PlatformIconBox(Ecolor, FontAwesomeIcons.envelopeOpen),
+                PlatformIconBox(Gcolor, FontAwesomeIcons.google),
+                PlatformIconBox(Ocolor, FontAwesomeIcons.envelopeOpen)
               ],
             ),
             SizedBox(height: 20),
@@ -198,5 +168,19 @@ class _AppPageState extends State<AppPage> {
     //     },
     //   ),
     // );
+  }
+
+  Container PlatformIconBox(color1, icon1) {
+    return Container(
+        height: 32,
+        width: 32,
+        decoration: BoxDecoration(
+            color: color1, borderRadius: BorderRadius.circular(12)),
+        child: Center(
+            child: FaIcon(
+          icon1,
+          size: 20,
+          color: Colors.white,
+        )));
   }
 }
