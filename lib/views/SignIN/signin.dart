@@ -1,11 +1,13 @@
 import 'package:deeps/views/SignUP/signup.dart';
 import 'package:deeps/views/dashboard.dart';
 import 'package:deeps/views/signIn/forgot_password_page.dart';
+import 'package:deeps/views/signUp/Plateform_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../Utils/mySnackbar.dart';
 
@@ -445,6 +447,9 @@ class _SignInState extends State<SignIn> {
 /////////////////////////// Google Sign In //////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
   Future googleLogin() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final uid = user?.uid;
+
     try {
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) return;
@@ -459,15 +464,39 @@ class _SignInState extends State<SignIn> {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       await Future.delayed(const Duration(seconds: 3));
+
       setState(() {
         isLoading = false;
         navigator!.pop();
       });
-      Get.to(() => Dashboard());
+      checkDocumentExists();
     } catch (e) {
       print(e.toString());
+      Get.showSnackbar(mySnackbar(
+          "Login Failed! Please try again", Colors.red, Icons.warning_rounded));
     }
     // notifyListeners();
+  }
+
+  Future<void> checkDocumentExists() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final String uid = user.uid.toString();
+    final snapshot =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (snapshot.exists) {
+      Get.showSnackbar(mySnackbar(
+          "Sign in Successful!", Colors.green, Icons.check_circle_rounded));
+      // print('Document exists');
+      // print(uid);
+      Get.to(() => Dashboard());
+      // Perform actions if document exists
+    } else {
+      Get.showSnackbar(mySnackbar("Complete the form to Sign In!",
+          Colors.greenAccent, Icons.check_circle_rounded));
+      // print('Document does not exist');
+      // print(uid);
+      Get.to(() => PlateformSignup());
+    }
   }
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -491,28 +520,28 @@ class _SignInState extends State<SignIn> {
 //     },
 //   );
 // }
-class GoogleSignInProvider extends ChangeNotifier {
-  final googleSignIn = GoogleSignIn();
-  GoogleSignInAccount? _user;
-  GoogleSignInAccount get user => _user!;
+// class GoogleSignInProvider extends ChangeNotifier {
+//   final googleSignIn = GoogleSignIn();
+//   GoogleSignInAccount? _user;
+//   GoogleSignInAccount get user => _user!;
 
-  Future googleLogin() async {
-    try {
-      final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) return;
-      _user = googleUser;
+//   Future googleLogin() async {
+//     try {
+//       final googleUser = await googleSignIn.signIn();
+//       if (googleUser == null) return;
+//       _user = googleUser;
 
-      final googleAuth = await googleUser.authentication;
+//       final googleAuth = await googleUser.authentication;
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+//       final credential = GoogleAuthProvider.credential(
+//         accessToken: googleAuth.accessToken,
+//         idToken: googleAuth.idToken,
+//       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
-    } catch (e) {
-      print(e.toString());
-    }
-    notifyListeners();
-  }
-}
+//       await FirebaseAuth.instance.signInWithCredential(credential);
+//     } catch (e) {
+//       print(e.toString());
+//     }
+//     notifyListeners();
+//   }
+// }

@@ -18,6 +18,45 @@ class _AppPageState extends State<AppPage> {
   Color Gcolor = Colors.grey.withOpacity(0.2);
   Color Ocolor = Colors.grey.withOpacity(0.2);
 
+  void checkLoginPlatform() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String provider = user.providerData[0].providerId;
+      switch (provider) {
+        case 'google.com':
+          setState(() {
+            Gcolor = Colors.amber;
+          });
+          print('Logged in with Google');
+          break;
+        case 'facebook.com':
+          print('Logged in with Facebook');
+          break;
+        case 'twitter.com':
+          print('Logged in with Twitter');
+          break;
+        case 'password':
+          setState(() {
+            Ecolor = Colors.amber;
+          });
+          print('Logged in with Email/Password');
+          break;
+        // Add cases for other authentication providers as needed
+        // default:
+        //   print('Logged in with $provider');
+        //   break;
+      }
+    } else {
+      print('User is not logged in');
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    checkLoginPlatform();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
