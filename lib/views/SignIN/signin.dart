@@ -1,8 +1,10 @@
 import 'package:deeps/views/SignUP/signup.dart';
 import 'package:deeps/views/dashboard.dart';
+import 'package:deeps/views/signIn/OTP_page.dart';
 import 'package:deeps/views/signIn/forgot_password_page.dart';
 import 'package:deeps/views/signUp/Plateform_signup.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
@@ -238,7 +240,6 @@ class _SignInState extends State<SignIn> {
                             onTap: () {
                               googleLogin();
                               isLoading = true;
-
                               showLoaderDialog(context);
                             },
                             // onTap: () async {
@@ -257,7 +258,7 @@ class _SignInState extends State<SignIn> {
                                 borderRadius: BorderRadius.circular(80),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.shade200,
+                                    color: Colors.grey.shade300,
                                     spreadRadius: 1,
                                     blurRadius: 15,
                                     offset: const Offset(
@@ -288,13 +289,8 @@ class _SignInState extends State<SignIn> {
                           SizedBox(height: 20),
                           InkWell(
                             splashColor: Colors.green,
-                            onTap: () async {
-                              const url = 'https://www.facebook.com/';
-                              if (await canLaunch(url)) {
-                                await launch(url);
-                              } else {
-                                throw 'Could not launch $url';
-                              }
+                            onTap: () {
+                              Get.to(() => OTPPage());
                             },
                             child: Container(
                               height: _h * 0.08,
@@ -303,7 +299,7 @@ class _SignInState extends State<SignIn> {
                                 borderRadius: BorderRadius.circular(80),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.shade200,
+                                    color: Colors.grey.shade300,
                                     spreadRadius: 1,
                                     blurRadius: 15,
                                     offset: const Offset(
@@ -317,15 +313,12 @@ class _SignInState extends State<SignIn> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  Container(
-                                    height: 40,
-                                    width: 40,
-                                    decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: AssetImage(
-                                                "assets/facebook.png"))),
+                                  FaIcon(
+                                    FontAwesomeIcons.commentSms,
+                                    color: Colors.lightBlue,
+                                    size: 32,
                                   ),
-                                  Text("Continue with Facebook"),
+                                  Text("Continue with Message"),
                                   Icon(Icons.keyboard_arrow_right)
                                 ],
                               ),

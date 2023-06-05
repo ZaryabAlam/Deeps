@@ -117,9 +117,9 @@ class _AppPageState extends State<AppPage> {
                       fontSize: 18),
                 ),
                 SizedBox(width: 0.8),
-                PlatformIconBox(Ecolor, FontAwesomeIcons.envelopeOpen),
+                PlatformIconBox(Ecolor, FontAwesomeIcons.solidEnvelopeOpen),
                 PlatformIconBox(Gcolor, FontAwesomeIcons.google),
-                PlatformIconBox(Ocolor, FontAwesomeIcons.envelopeOpen)
+                PlatformIconBox(Ocolor, FontAwesomeIcons.commentSms)
               ],
             ),
             SizedBox(height: 20),

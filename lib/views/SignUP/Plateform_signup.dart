@@ -34,6 +34,31 @@ class _PlateformSignupState extends State<PlateformSignup> {
   var imagepath = "";
   bool isValidForm = false;
   bool isLoading = false;
+  String? emailOrphone = "";
+
+  Future<void> showUserInfo() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      if (user.providerData[0].providerId == 'google.com') {
+        // User logged in with email
+        emailOrphone = user.email;
+        print('emailOrpassword: $emailOrphone');
+      } else if (user.providerData[0].providerId == 'phone') {
+        // User logged in with phone number
+        emailOrphone = user.phoneNumber;
+        print('emailOrpassword: $emailOrphone');
+      }
+    } else {
+      print('User is not logged in');
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    // checkemailOrphone();
+    showUserInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +68,7 @@ class _PlateformSignupState extends State<PlateformSignup> {
     return Scaffold(
         backgroundColor: Colors.amber,
         appBar: AppBar(
-          title: Text("Details", style: TextStyle(color: Colors.black)),
+          title: Text("Detailsss", style: TextStyle(color: Colors.black)),
           // centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.amber,
@@ -169,7 +194,7 @@ class _PlateformSignupState extends State<PlateformSignup> {
                                       borderRadius: BorderRadius.circular(80)),
                                   child: Align(
                                       alignment: Alignment.centerLeft,
-                                      child: Text(user.email.toString(),
+                                      child: Text(emailOrphone.toString(),
                                           style: TextStyle(
                                               fontSize: 17,
                                               color: Colors.black38))),
@@ -263,7 +288,7 @@ class _PlateformSignupState extends State<PlateformSignup> {
         Map<String, dynamic> user = {
           "uId": user1.uid.toString(),
           "userName": userNameController.text.trim(),
-          "email": user1.email.toString(),
+          "email": emailOrphone.toString(),
           "imagepath": imagepath,
         };
 
@@ -433,7 +458,7 @@ class _PlateformSignupState extends State<PlateformSignup> {
   Future uploadFile() async {
     if (_photo == null) return;
     final fileName = basename(_photo!.path);
-    final destination = 'Images/${user.email}';
+    final destination = 'Images/${emailOrphone}';
 
     try {
       Reference reference =
