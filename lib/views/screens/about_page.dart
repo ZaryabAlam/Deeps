@@ -13,6 +13,34 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   final user = FirebaseAuth.instance.currentUser!;
+  IconData eIcon = FontAwesomeIcons.at;
+
+  void checkLoginPlatform() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String provider = user.providerData[0].providerId;
+      switch (provider) {
+        case 'phone':
+          setState(() {
+            eIcon = FontAwesomeIcons.mobile;
+          });
+          break;
+        // // Add cases for other authentication providers as needed
+        // default:
+        //   print('Logged in with $provider');
+        //   break;
+      }
+    } else {
+      print('User is not logged in');
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    checkLoginPlatform();
+  }
+
   // bool _showIndicator = false;
 
   // void initState() {
@@ -147,7 +175,7 @@ class _AboutPageState extends State<AboutPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        iconBox(FontAwesomeIcons.at),
+                                        iconBox(eIcon),
                                         SizedBox(width: 10),
                                         detailBox(data['email']),
                                       ],

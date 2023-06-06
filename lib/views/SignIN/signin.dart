@@ -6,7 +6,6 @@ import 'package:deeps/views/signUp/Plateform_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,6 +50,10 @@ class _SignInState extends State<SignIn> {
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.amber,
           elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new_outlined, color: Colors.black),
+            onPressed: () => Get.back(),
+          ),
           actions: [
             GestureDetector(
               onTap: () {

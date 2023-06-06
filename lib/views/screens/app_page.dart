@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 
 import '../../Utils/logOut.dart';
 
@@ -41,7 +40,13 @@ class _AppPageState extends State<AppPage> {
           });
           print('Logged in with Email/Password');
           break;
-        // Add cases for other authentication providers as needed
+        case 'phone':
+          setState(() {
+            Ocolor = Colors.amber;
+          });
+          print('Logged in with OTP');
+          break;
+        // // Add cases for other authentication providers as needed
         // default:
         //   print('Logged in with $provider');
         //   break;

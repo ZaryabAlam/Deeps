@@ -1,15 +1,12 @@
 import 'package:deeps/Utils/mySnackbar.dart';
 import 'package:deeps/views/dashboard.dart';
-import 'package:deeps/views/home.dart';
 import 'package:deeps/views/SignIN/signin.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,6 +14,8 @@ import 'dart:io';
 import 'package:path/path.dart';
 
 import '../../Utils/loaderDialog.dart';
+import '../signIn/OTP_page.dart';
+import 'Plateform_signup.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -34,6 +33,9 @@ class _SignUpState extends State<SignUp> {
   bool isValidForm = false;
   bool isObscure = true;
   bool isLoading = false;
+  final googleSignIn = GoogleSignIn();
+  GoogleSignInAccount? _user;
+  GoogleSignInAccount get user => _user!;
 
   @override
   void dispose() {
@@ -55,6 +57,10 @@ class _SignUpState extends State<SignUp> {
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.amber,
           elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new_outlined, color: Colors.black),
+            onPressed: () => Get.back(),
+          ),
           actions: [
             GestureDetector(
               onTap: () {
@@ -181,6 +187,8 @@ class _SignUpState extends State<SignUp> {
                                 },
                                 controller: emailController,
                                 cursorColor: Colors.black,
+                                textInputAction: TextInputAction.done,
+                                keyboardType: TextInputType.emailAddress,
                                 decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.symmetric(
                                         vertical: 20.0, horizontal: 30.0),
@@ -202,6 +210,7 @@ class _SignUpState extends State<SignUp> {
                                   return null;
                                 },
                                 controller: userNameController,
+                                textInputAction: TextInputAction.done,
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.symmetric(
@@ -228,6 +237,7 @@ class _SignUpState extends State<SignUp> {
                                 controller: passController,
                                 cursorColor: Colors.black,
                                 obscureText: isObscure,
+                                textInputAction: TextInputAction.done,
                                 decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.symmetric(
                                         vertical: 20.0, horizontal: 30.0),
@@ -284,17 +294,22 @@ class _SignUpState extends State<SignUp> {
                                     },
                                     child: Text("Sign Up")),
                               ),
-                              SizedBox(height: 40),
+                              SizedBox(height: 50),
                               GestureDetector(
-                                onTap: () async {
-                                  const url =
-                                      'https://accounts.google.com/v3/signin/identifier?dsh=S-251231302%3A1663782779691460&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F%26ogbl%2F&emr=1&ltmpl=default&ltmplcache=2&osid=1&passive=true&rm=false&scc=1&service=mail&ss=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin&ifkv=AQDHYWov1HYEBHuWBN_m80xuHQYWeafjv3SjrJPJWHgKO0hkWIU7vbUzR1H1up9hCzvJK9h74UO5iw';
-                                  if (await canLaunch(url)) {
-                                    await launch(url);
-                                  } else {
-                                    throw 'Could not launch $url';
-                                  }
+                                onTap: () {
+                                  googleLogin();
+                                  isLoading = true;
+                                  showLoaderDialog(context);
                                 },
+                                // onTap: () async {
+                                //   const url =
+                                //       'https://accounts.google.com/v3/signin/identifier?dsh=S-251231302%3A1663782779691460&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F%26ogbl%2F&emr=1&ltmpl=default&ltmplcache=2&osid=1&passive=true&rm=false&scc=1&service=mail&ss=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin&ifkv=AQDHYWov1HYEBHuWBN_m80xuHQYWeafjv3SjrJPJWHgKO0hkWIU7vbUzR1H1up9hCzvJK9h74UO5iw';
+                                //   if (await canLaunch(url)) {
+                                //     await launch(url);
+                                //   } else {
+                                //     throw 'Could not launch $url';
+                                //   }
+                                // },
                                 child: Container(
                                   height: _h * 0.08,
                                   decoration: BoxDecoration(
@@ -302,7 +317,7 @@ class _SignUpState extends State<SignUp> {
                                     borderRadius: BorderRadius.circular(80),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.grey.shade200,
+                                        color: Colors.grey.shade300,
                                         spreadRadius: 1,
                                         blurRadius: 15,
                                         offset: const Offset(
@@ -333,13 +348,8 @@ class _SignUpState extends State<SignUp> {
                               SizedBox(height: 20),
                               InkWell(
                                 splashColor: Colors.green,
-                                onTap: () async {
-                                  const url = 'https://www.facebook.com/';
-                                  if (await canLaunch(url)) {
-                                    await launch(url);
-                                  } else {
-                                    throw 'Could not launch $url';
-                                  }
+                                onTap: () {
+                                  Get.to(() => OTPPage());
                                 },
                                 child: Container(
                                   height: _h * 0.08,
@@ -348,7 +358,7 @@ class _SignUpState extends State<SignUp> {
                                     borderRadius: BorderRadius.circular(80),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.grey.shade200,
+                                        color: Colors.grey.shade300,
                                         spreadRadius: 1,
                                         blurRadius: 15,
                                         offset: const Offset(
@@ -362,15 +372,12 @@ class _SignUpState extends State<SignUp> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: [
-                                      Container(
-                                        height: 40,
-                                        width: 40,
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/facebook.png"))),
+                                      FaIcon(
+                                        FontAwesomeIcons.commentSms,
+                                        color: Colors.lightBlue,
+                                        size: 32,
                                       ),
-                                      Text("Continue with Facebook"),
+                                      Text("Continue with Message"),
                                       Icon(Icons.keyboard_arrow_right)
                                     ],
                                   ),
@@ -388,49 +395,6 @@ class _SignUpState extends State<SignUp> {
           ],
         ));
   }
-
-  // Future signUp() async {
-  //   await Future.delayed(const Duration(seconds: 3));
-  //   setState(() {
-  //     isLoading = false;
-  //     navigator!.pop();
-  //   });
-  //   // showDialog(
-  //   //     context: context,
-  //   //     barrierDismissible: false,
-  //   //     builder: ((context) => Center(
-  //   //           child: CircularProgressIndicator(),
-  //   //         )));
-  //   try {
-  //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //         email: emailController.text.trim(),
-  //         password: passController.text.trim());
-  //     Get.to(() => AppPage());
-  //     Get.showSnackbar(mySnackbar(
-  //         "Signup Successful!", Colors.green, Icons.check_circle_rounded));
-  //   } on FirebaseAuthException catch (e) {
-  //     if (e.code == "email-already-in-use") {
-  //       Get.showSnackbar(const GetSnackBar(
-  //         margin: EdgeInsets.all(15),
-  //         icon: Icon(Icons.warning_rounded, color: Colors.white),
-  //         borderRadius: 8,
-  //         message: ('An account already exist with the given email address'),
-  //         duration: Duration(seconds: 3),
-  //         backgroundColor: Colors.red,
-  //       ));
-  //     }
-  //     // Utils.showSnackBar(e.message);
-  //     else {
-  //       Fluttertoast.showToast(
-  //           msg: 'Signup Failed',
-  //           toastLength: Toast.LENGTH_SHORT,
-  //           gravity: ToastGravity.BOTTOM,
-  //           backgroundColor: Colors.red.shade300,
-  //           textColor: Colors.white);
-  //     }
-  //     print(e);
-  //   }
-  // }
 
   Future<bool?> signUp(BuildContext context) async {
     if (_photo == null) {
@@ -656,4 +620,61 @@ class _SignUpState extends State<SignUp> {
       print('error occured');
     }
   }
+
+  /////////////////////////// Google Sign In //////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+  Future googleLogin() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final uid = user?.uid;
+
+    try {
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return;
+      _user = googleUser;
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      await Future.delayed(const Duration(seconds: 3));
+
+      setState(() {
+        isLoading = false;
+        navigator!.pop();
+      });
+      checkDocumentExists();
+    } catch (e) {
+      print(e.toString());
+      Get.showSnackbar(mySnackbar(
+          "Login Failed! Please try again", Colors.red, Icons.warning_rounded));
+    }
+    // notifyListeners();
+  }
+
+  Future<void> checkDocumentExists() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final String uid = user.uid.toString();
+    final snapshot =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (snapshot.exists) {
+      Get.showSnackbar(mySnackbar(
+          "Sign in Successful!", Colors.green, Icons.check_circle_rounded));
+      // print('Document exists');
+      // print(uid);
+      Get.to(() => Dashboard());
+      // Perform actions if document exists
+    } else {
+      Get.showSnackbar(mySnackbar("Complete the form to Sign In!",
+          Colors.greenAccent, Icons.check_circle_rounded));
+      // print('Document does not exist');
+      // print(uid);
+      Get.to(() => PlateformSignup());
+    }
+  }
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 }

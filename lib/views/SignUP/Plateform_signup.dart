@@ -1,9 +1,5 @@
 import 'package:deeps/Utils/mySnackbar.dart';
 import 'package:deeps/views/dashboard.dart';
-import 'package:deeps/views/home.dart';
-import 'package:deeps/views/SignIN/signin.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -68,7 +64,7 @@ class _PlateformSignupState extends State<PlateformSignup> {
     return Scaffold(
         backgroundColor: Colors.amber,
         appBar: AppBar(
-          title: Text("Detailsss", style: TextStyle(color: Colors.black)),
+          title: Text("Details", style: TextStyle(color: Colors.black)),
           // centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.amber,
